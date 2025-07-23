@@ -1,61 +1,101 @@
 import React, { useState } from "react";
 import {
-    Container,
-    Typography,
-    Tabs,
-    Tab,
-    Grid,
-    Card,
-    CardMedia,
-    CardContent,
-    CardActions,
-    Button,
-} from "@mui/material";
-import { productCategories } from "../../utils/mocks";
+  Flex,
+  Circle,
+  Box,
+  Image,
+  Badge,
+  Icon,
+  chakra,
+  Tooltip,
+} from '@chakra-ui/react'
+import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs'
+import { FiShoppingCart } from 'react-icons/fi'
 
-export default function ProductsSection() {
-  const [tab, setTab] = useState(productCategories[0].key);
-  const currentCategory = productCategories.find((c) => c.key === tab);
+const data = {
+  isNew: true,
+  imageURL:
+    'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=4600&q=80',
+  name: 'Wayfarer Classic',
+  price: 4.5,
+  rating: 4.2,
+  numReviews: 34,}
 
+function Rating({ rating, numReviews }) {
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Tienda
-      </Typography>
-      <Tabs
-        value={tab}
-        onChange={(e, newVal) => setTab(newVal)}
-        centered
-        sx={{ mb: 4 }}
-      >
-        {productCategories.map((c) => (
-          <Tab key={c.key} value={c.key} label={c.label} />
-        ))}
-      </Tabs>
-      <Grid container spacing={4}>
-        {currentCategory.items.map((item) => (
-          <Grid item xs={12} sm={6} md={3} key={item.id}>
-            <Card sx={{ height: "100%", width: 250, display: "flex", flexDirection: "column" }}>
-              <CardMedia component="img" height="180" image={item.image} alt={item.name} sx={{
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                display: "flex",
-              }} />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography gutterBottom variant="h6" component="h3">
-                  {item.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  $ {item.price.toFixed(2)}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">Añadir al carrito</Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  );
+    <Box display="flex" alignItems="center">
+      {Array(5)
+        .fill('')
+        .map((_, i) => {
+          const roundedRating = Math.round(rating * 2) / 2
+          if (roundedRating - i >= 1) {
+            return (
+              <BsStarFill
+                key={i}
+                style={{ marginLeft: '1' }}
+                color={i < rating ? 'teal.500' : 'gray.300'}
+              />
+            )
+          }
+          if (roundedRating - i === 0.5) {
+            return <BsStarHalf key={i} style={{ marginLeft: '1' }} />
+          }
+          return <BsStar key={i} style={{ marginLeft: '1' }} />
+        })}
+      <Box as="span" ml="2" color="gray.600" fontSize="sm">
+        {numReviews} review{numReviews > 1 && 's'}
+      </Box>
+    </Box>
+  )
 }
+
+function ProductsSection() {
+  return (
+    <Flex p={50} w="full" alignItems="center" justifyContent="center">
+      <Box
+        maxW="sm"
+        borderWidth="1px"
+        rounded="lg"
+        shadow="lg"
+        position="relative">
+        {data.isNew && (
+          <Circle size="10px" position="absolute" top={2} right={2} bg="red.200" />
+        )}
+
+        <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" />
+
+        <Box p="6">
+          <Box display="flex" alignItems="baseline">
+            {data.isNew && (
+              <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="red">
+                New
+              </Badge>
+            )}
+          </Box>
+          <Flex mt="1" justifyContent="space-between" alignContent="center">
+            <Box
+              fontSize="2xl"
+              fontWeight="semibold"
+              as="h4"
+              lineHeight="tight"
+              isTruncated>
+              {data.name}
+            </Box>
+          </Flex>
+
+          <Flex justifyContent="space-between" alignContent="center">
+            <Rating rating={data.rating} numReviews={data.numReviews} />
+            <Box fontSize="2xl">
+              <Box as="span" color={'gray.600'} fontSize="lg">
+                £
+              </Box>
+              {data.price.toFixed(2)}
+            </Box>
+          </Flex>
+        </Box>
+      </Box>
+    </Flex>
+  )
+}
+
+export default ProductsSection

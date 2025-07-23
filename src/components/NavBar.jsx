@@ -1,160 +1,146 @@
-import * as React from 'react';
-import {  Box, AppBar, Toolbar, IconButton, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemText, CssBaseline, useScrollTrigger, Fab, Fade, Badge, Divider } from '@mui/material';
-import {KeyboardArrowUp, FitnessCenter, Menu, Mail, Notifications, AccountCircle,  } from '@mui/icons-material';
-import SearchBar from '../components/Landing/SearchBar';
-import { useTheme } from '@mui/material/styles';
+import {
+  Box,
+  Flex,
+  Avatar,
+  HStack,
+  IconButton,
+  Button,
+  Menu,
+  useDisclosure,
+  Stack,
+  Group,
+  Input,
+  Portal
+} from '@chakra-ui/react'
+import { IoMdMenu, IoMdAdd, IoMdClose   } from "react-icons/io";
 
+const Links = ['Dashboard', 'Projects', 'Team']
 
-const navItems = ['Home', 'Turnos', 'Contacto', 'Productos', 'Planes de Membresía'];
-
-function ScrollTop(props) {
-  const { children, window } = props;
-  const trigger = useScrollTrigger({
-    target: window ? window() : undefined,
-    disableHysteresis: true,
-    threshold: 100,
-  });
-
- const handleClick = () => {
-  document.querySelector('#back-to-top-anchor')?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  });
-};
-
+const NavLink = (props) => {
+  const { children } = props
   return (
-    <Fade in={trigger}>
-      <Box
-        onClick={handleClick}
-        role="presentation"
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
-      >
-        {children}
-      </Box>
-    </Fade>
-  );
+    <Box
+      as="a"
+      px={2}
+      py={1}
+      rounded={'md'}
+      _hover={{
+        textDecoration: 'none',
+      }}
+      href={'#'}>
+      {children}
+    </Box>
+  )
 }
 
-export default function DrawerAppBar(props) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const theme = useTheme();
-
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
-   const [auth] = React.useState(true);
-
-
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Box flexDirection={'row'} display="flex" alignItems="center" justifyContent="center">
-        <FitnessCenter sx={{ fontSize: 30, color: theme.palette.primary.main }} />
-      <Typography variant="h6" sx={{ my: 2 }}>
-        FitCenter
-      </Typography>
-      </Box>
-      <Divider />
-      <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
-  const container = window !== undefined ? () => window.document.body : undefined;
+export default function NavBar() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar component="nav" sx={{minHeight: 64}} >
-        <Toolbar>
+    <>
+      <Box px={4}>
+        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <Menu />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            onClick={() => window.location.href = '/'}
-            hover={{ cursor: 'pointer' }}
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-            FitCenter
-          </Typography>
-          <SearchBar/>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {navItems.map((page) => (
-              <Button
-                key={page}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            size={'md'}
+            icon={isOpen ? <IoMdClose /> : <IoMdMenu />}
+            aria-label={'Open Menu'}
+            display={{ md: 'none' }}
+            onClick={isOpen ? onClose : onOpen}
+          />
+          <HStack spacing={8} alignItems={'center'}>
+            <Box>Logo</Box>
+            <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
+              {Links.map((link) => (
+                <Box
+                key={link}
+                as="a"
+                px={2}
+                py={1}
+                rounded={'md'}
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                href={'#'}>
+                  {link}
+                </Box>
+              ))}
+            </HStack>
+          </HStack>
+          <Flex alignItems={'center'}>
+            <Group attached w="full" maxW="sm">
+      <Input flex="1" placeholder="Enter your email" />
+      <Button bg="bg.subtle" variant="outline">
+        Submit
+      </Button>
+    </Group>
+            <Stack
+          flex={{ base: 1, md: 0 }}
+          justify={'flex-end'}
+          direction={'row'}
+          spacing={6}>
+          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+            Sign In
+          </Button>
+          <Button
+            as={'a'}
+            display={{ base: 'none', md: 'inline-flex' }}
+            fontSize={'sm'}
+            fontWeight={600}
+            color={'white'}
+            bg={'pink.400'}
+            href={'#'}
+            _hover={{
+              bg: 'pink.300',
+            }}>
+            Sign Up
+          </Button>
+        </Stack>
+            <Button
+              variant={'solid'}
+              colorScheme={'teal'}
+              size={'sm'}
+              mr={4}
+              leftIcon={<IoMdAdd />}>
+              Action
+            </Button>
+            <Menu.Root>
+              <Menu.Trigger
+                as={Button}
+                rounded={'full'}
+                variant={'link'}
+                cursor={'pointer'}
+                minW={0}>
+                  <Avatar.Root size="sm">
+                    <Avatar.Fallback name="Segun Adebayo" />
+                    <Avatar.Image src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9" />
+                    </Avatar.Root>
+              </Menu.Trigger>
+              <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  <Menu.Item>Link 1</Menu.Item>
+                  <Menu.Item>Link 2</Menu.Item>
+                  <Menu.Separator />
+                  <Menu.Item>Link 3</Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+              </Portal>
+            </Menu.Root>
+          </Flex>
+        </Flex>
+
+        {isOpen ? (
+          <Box pb={4} display={{ md: 'none' }}>
+            <Stack as={'nav'} spacing={4}>
+              {Links.map((link) => (
+                <NavLink key={link}>{link}</NavLink>
+              ))}
+            </Stack>
           </Box>
-          {auth && (
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <Mail />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <Notifications />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-haspopup="true"
-              color="inherit"
-            >
-              {/* <Avatar alt="Remy Sharp" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR1rZW7V5iIEsH7bcxoS4wBXS13C5RTmivYA&s" /> */}
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          )}
-        </Toolbar >
-      </AppBar>
-      <nav>
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </nav>
-      <ScrollTop {...props}>
-        <Fab size="small" aria-label="scroll back to top">
-          <KeyboardArrowUp />
-        </Fab>
-      </ScrollTop>
-      <Toolbar id="back-to-top-anchor" />
-    </Box>
-  );
+        ) : null}
+      </Box>
+
+      <Box p={4}>Main Content Here</Box>
+    </>
+  )
 }
