@@ -1,14 +1,20 @@
 import './App.css'
-import Landing from './pages/Landing'
-import Navbar from './components/NavBar'
-import Footer from './components/Footer'
+import { BrowserRouter as Router, Routes } from 'react-router-dom'
+import { rutas } from './routing/rutas'
+import NavBar from './components/Layaut/NavBar'
+import Footer from './components/Layaut/Footer'
+
 
 function App() {
   return (
     <>
-      <Navbar />
-      <Landing />
-      <Footer />
+    <NavBar/>
+    <Router>
+      <Routes>
+        {rutas}
+      </Routes>
+    </Router>,
+    <Footer/>
     </>
   )
 }
