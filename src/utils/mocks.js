@@ -1,8 +1,4 @@
-export const productCategories = [
-  {
-    key: "supplements",
-    label: "Suplementos",
-    items: [
+export const products = [
       {
         id: 1,
         name: "Proteína Whey 2 lb",
@@ -15,12 +11,6 @@ export const productCategories = [
         price: 19.99,
         image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nrx/nrx00074/y/39.jpg",
       },
-    ],
-  },
-  {
-    key: "accesorios",
-    label: "Accesorios",
-    items: [
       {
         id: 3,
         name: "Guantes de Entreno",
@@ -33,8 +23,6 @@ export const productCategories = [
         price: 12.5,
         image: "https://acdn-us.mitiendanube.com/stores/966/664/products/s11r1-0602f0f5f984218cca15680574474023-240-0.jpg",
       },
-    ],
-  },
 ];
 
 export const instructors = [
