@@ -111,7 +111,7 @@ export default function NavBar() {
                 <Portal>
                   <Menu.Positioner>
                     <Menu.Content>
-                      <Menu.Item onClick={handleGoToProfile value="profile">Profile</Menu.Item>
+                      <Menu.Item onClick={handleGoToProfile} value="profile">Profile</Menu.Item>
                       <Menu.Item value="settings">Configuracion</Menu.Item>
                       <Menu.Item value="logout" onClick={() => setAuth(false)}>Cerrar Sesion</Menu.Item>
                     </Menu.Content>
