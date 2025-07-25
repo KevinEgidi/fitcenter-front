@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { FaCheck } from "react-icons/fa6";
 
-export default function MembershipPlan() {
+ export default function MembershipPlan() {
   return (
     <Center py={6}>
       <Box
@@ -27,7 +27,7 @@ export default function MembershipPlan() {
             fontWeight={500}
             p={2}
             px={3}
-            color={'green.500'}
+            color={'blue.500'}
             rounded={'full'}>
             Hobby
           </Text>
@@ -43,25 +43,25 @@ export default function MembershipPlan() {
         <Box px={6} py={10}>
           <List.Root spacing="3">
       <List.Item>
-        <List.Indicator color="green.500">
+        <List.Indicator color="blue.500">
           <FaCheck />
         </List.Indicator>
         5.000 page views
       </List.Item>
       <List.Item>
-        <List.Indicator color="green.500">
+        <List.Indicator color="blue.500">
           <FaCheck />
         </List.Indicator>
         50 automation executions
       </List.Item>
       <List.Item>
-        <List.Indicator color="green.500">
+        <List.Indicator color="blue.500">
           <FaCheck />
         </List.Indicator>
         50 identified users
       </List.Item>
       <List.Item>
-        <List.Indicator color="green.500">
+        <List.Indicator color="blue.500">
           <FaCheck />
         </List.Indicator>
         All features
@@ -71,15 +71,15 @@ export default function MembershipPlan() {
           <Button
             mt={10}
             w={'full'}
-            bg={'green.400'}
+            bg={'blue.400'}
             color={'white'}
             rounded={'xl'}
-            boxShadow={'0 5px 20px 0px rgb(72 187 120 / 43%)'}
+            boxShadow={'0 5px 20px 0px rgb(6, 14, 158 / 63%)'}
             _hover={{
-              bg: 'green.500',
+              bg: 'blue.500',
             }}
             _focus={{
-              bg: 'green.500',
+              bg: 'blue.500',
             }}>
             Start your trial
           </Button>
