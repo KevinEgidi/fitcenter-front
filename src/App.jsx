@@ -1,21 +1,18 @@
-import './App.css'
-import { BrowserRouter as Router, Routes } from 'react-router-dom'
-import { rutas } from './routing/rutas'
-import NavBar from './components/Layaut/NavBar'
-import Footer from './components/Layaut/Footer'
-
+import "./App.css";
+import { BrowserRouter as Router, Routes } from "react-router-dom";
+import { rutas } from "./routing/rutas";
+import NavBar from "./components/Layaut/NavBar";
+import Footer from "./components/Layaut/Footer";
 
 function App() {
   return (
     <>
-    <NavBar/>
-    <Router>
-      <Routes>
-        {rutas}
-      </Routes>
-    </Router>,
-    <Footer/>
+      <NavBar />
+      {/* <Router> */}
+      <Routes>{rutas}</Routes>
+      {/* </Router>, */}
+      <Footer />
     </>
-  )
+  );
 }
-export default App
+export default App;

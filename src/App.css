@@ -21,7 +21,7 @@ html {
 
 /* 3. Tamaños base y fuente limpia */
 body {
-  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   overflow-x: hidden;
@@ -72,11 +72,64 @@ textarea {
 }
 
 /* 9. Ajuste universal de tipografía */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
 }
 
 /* 10. Full-width garantizado para el layout base */
-#root, .App {
+#root,
+.App {
   width: 100%;
+}
+
+/*Panel socio*/
+
+/* 11. estilos generales de la aplicación */
+.App {
+  text-align: center;
+}
+
+/* 12. Logo de la aplicación */
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+/* 13. Animación del logo */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+/* 14. Encabezado de la aplicación */
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+/* 15. Enlaces de la aplicación */
+.App-link {
+  color: #61dafb;
+}
+
+/* 16. Animación del logo */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

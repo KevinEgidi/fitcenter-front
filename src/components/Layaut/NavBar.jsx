@@ -11,10 +11,11 @@ import {
   Group,
   Input,
   Portal,
-  Image,
+   Image,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { IoMdMenu, IoMdAdd, IoMdClose } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Links = ["Dashboard", "Cart", "Turns"];
 
@@ -38,8 +39,12 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const handleGoToProfile = () => {
+    navigate("/profile");
+  };
   const [auth, setAuth] = useState(false);
-  console.log(auth);
+  
   return (
     <>
       <Box>
@@ -106,9 +111,9 @@ export default function NavBar() {
                 <Portal>
                   <Menu.Positioner>
                     <Menu.Content>
-                      <Menu.Item value="account">Account</Menu.Item>
-                      <Menu.Item value="settings">Settings</Menu.Item>
-                      <Menu.Item value="logout" onClick={() => setAuth(false)}>Logout</Menu.Item>
+                      <Menu.Item onClick={handleGoToProfile value="profile">Profile</Menu.Item>
+                      <Menu.Item value="settings">Configuracion</Menu.Item>
+                      <Menu.Item value="logout" onClick={() => setAuth(false)}>Cerrar Sesion</Menu.Item>
                     </Menu.Content>
                   </Menu.Positioner>
                 </Portal>
