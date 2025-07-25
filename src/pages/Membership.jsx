@@ -1,4 +1,5 @@
-/* import React from "react";
+import React from "react";
+
 import {
   Box,
   Button,
@@ -9,11 +10,24 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-export default function Membership() {
+export default function Membresia() {
   const plans = [
-    { title: "Plan Básico", price: "$15.000 / mes" },
-    { title: "Plan Plus", price: "$20.000 / mes" },
-    { title: "Plan Premium", price: "$30.000 / mes" },
+    {
+      title: "Plan Básico",
+      price: "$15.000 / mes",
+      description: "Acceso ilimitado al gimnasio en horario regular.",
+    },
+    {
+      title: "Plan Plus",
+      price: "$20.000 / mes",
+      description: "Incluye clases grupales y acceso extendido.",
+    },
+    {
+      title: "Plan Premium",
+      price: "$30.000 / mes",
+      description:
+        "Acceso total, clases personalizadas y beneficios exclusivos.",
+    },
   ];
 
   return (
@@ -23,10 +37,10 @@ export default function Membership() {
       justify="center"
       py={10}
       px={5}
-      bg="gray.50"
+      bg={("gray.50", "gray.500")}
       minH="100vh"
     >
-      <Heading mb={6} color="green.500">
+      <Heading mb={6} color="black.500">
         Membresías
       </Heading>
       <Text fontSize="lg" mb={10} textAlign="center">
@@ -50,7 +64,10 @@ export default function Membership() {
               <Text fontSize="2xl" fontWeight="bold">
                 {plan.price}
               </Text>
-              <Button>Elegir Plan</Button>
+              <Text color="gray.600">{plan.description}</Text>
+              <Button colorScheme="green" size="lg">
+                Elegir Plan
+              </Button>
             </Stack>
           </Box>
         ))}
@@ -58,4 +75,3 @@ export default function Membership() {
     </Flex>
   );
 }
- */
