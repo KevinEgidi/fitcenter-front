@@ -23,7 +23,7 @@ export default function Landing() {
     { label: "99%", description: "Customer Satisfaction" },
   ];
   return (
-    <Box>
+    <Box p={4}>
       <Box mt={4} mb={4} bg="blue.50" py={2} px={10} borderRadius="3xl">
         <Stack direction={["column", "row"]} align="center" spacing={10}>
           <VStack align="start" maxW="600px">
