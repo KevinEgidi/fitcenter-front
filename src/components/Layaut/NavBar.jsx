@@ -47,7 +47,7 @@ export default function NavBar() {
   
   return (
     <>
-      <Box>
+      <Box p={2}>
         <Flex
           h={14}
           p={2}
