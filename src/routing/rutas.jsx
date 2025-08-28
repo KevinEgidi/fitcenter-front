@@ -4,9 +4,9 @@ import Landing from "../pages/Landing";
 import Cart from "../pages/cart";
 import HomeView from "../pages/HomeView";
 import UserProfile from "../components/Landing/UserProfile";
-import Turnos from "../components/Landing/Turnos";
-import TurnosAgendados from "../components/Landing/TurnosAgendados";
-import HistorialCompra from "../components/Landing/HistorialCompra";
+import Booking from "../components/Landing/Booking";
+import ScheduledAppoiments from "../components/Landing/ScheduledAppoiments";
+import PurchaseHistory from "../components/Landing/PurchaseHistory";
 import Dashboard from "../pages/Dashboard";
 
 export const rutas = [
@@ -14,10 +14,10 @@ export const rutas = [
     <Route path="/" element={<Landing />} />
     <Route path="/cart" element={<Cart />} />
     <Route path="/profile" element={<HomeView />} />
-    <Route path="/perfil" element={<UserProfile />} />
-    <Route path="/turno" element={<Turnos />} />
-    <Route path="/agendados" element={<TurnosAgendados />} />
-    <Route path="/historial" element={<HistorialCompra />} />
-    <Route path="/dashboard" element={<Dashboard/>} />
+    <Route path="/users" element={<UserProfile />} />
+    <Route path="/booking" element={<Booking />} />
+    <Route path="/agendados" element={<ScheduledAppoiments />} />
+    <Route path="/historial" element={<PurchaseHistory />} />
+    <Route path="/dashboard" element={<Dashboard />} />
   </>,
 ];

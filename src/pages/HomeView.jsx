@@ -19,11 +19,11 @@ function HomeView() {
       </h2>
 
       <div className="shortcuts">
-        <div className="shortcut" onClick={() => navigate("/perfil")}>
+        <div className="shortcut" onClick={() => navigate("/users")}>
           <FaUser className="icon" />
           <p>Perfil</p>
         </div>
-        <div className="shortcut" onClick={() => navigate("/turno")}>
+        <div className="shortcut" onClick={() => navigate("/booking")}>
           <FaCalendarPlus className="icon" />
           <p>Reservar</p>
         </div>
