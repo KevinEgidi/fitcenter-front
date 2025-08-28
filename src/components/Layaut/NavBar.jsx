@@ -1,21 +1,24 @@
 import {
   Box,
   Flex,
-  Avatar,
   HStack,
   IconButton,
-  Button,
-  Menu,
   useDisclosure,
   Stack,
-  Group,
   Input,
-  Portal,
-   Image,
+  Image,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Avatar,
 } from "@chakra-ui/react";
+import AuthModal from "../Landing/AuthModal";
 import { IoMdMenu, IoMdAdd, IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 const Links = ["Dashboard", "Cart", "Turns"];
 
@@ -39,12 +42,14 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isAuthModalOpen, openAuthModal, closeAuthModal, user, signOut } = useAuth();
   const navigate = useNavigate();
   const handleGoToProfile = () => {
     navigate("/profile");
   };
   const [auth, setAuth] = useState(false);
-  
+
+  console.log(user);
   return (
     <>
       <Box p={2}>
@@ -93,47 +98,35 @@ export default function NavBar() {
               ))}
             </HStack>
           </HStack>
-          <Group attached w="40%" maxW="sm" borderWidth="1px" rounded="lg">
-            <Input flex="1" placeholder="Search" p={2}/>
-            <Button bg="bg.subtle" variant="outline">
+          <HStack w="40%" maxW="sm" borderWidth="1px" rounded="lg" spacing={0}>
+            <Input flex="1" placeholder="Search" p={2} />
+            <Button bg="gray.100" variant="outline">
               Submit
             </Button>
-          </Group>
-          <Flex alignItems={"center"} justifyContent={"end"}  minW="20%">
-            {auth ? (
-              <Menu.Root positioning={{ placement: "right-end" }}>
-                <Menu.Trigger as={Button} variant={"link"} cursor={"pointer"} rounded="full" focusRing="outside">
-                  <Avatar.Root size="sm">
-                    <Avatar.Fallback name="Segun Adebayo" />
-                    <Avatar.Image src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9" />
-                  </Avatar.Root>
-                </Menu.Trigger>
-                <Portal>
-                  <Menu.Positioner>
-                    <Menu.Content>
-                      <Menu.Item onClick={handleGoToProfile} value="profile">Profile</Menu.Item>
-                      <Menu.Item value="settings">Configuracion</Menu.Item>
-                      <Menu.Item value="logout" onClick={() => setAuth(false)}>Cerrar Sesion</Menu.Item>
-                    </Menu.Content>
-                  </Menu.Positioner>
-                </Portal>
-              </Menu.Root>
-            ) : (
-              <HStack
-                flex={{ base: 1, md: 0 }}
-                justify={"flex-end"}
-                spacing={6}
-              >
-                <Button
-                  as={"a"}
-                  fontSize={"sm"}
-                  fontWeight={400}
-                  variant={"link"}
-                  href={"#"}
-                  onClick={() => setAuth(true)}
+          </HStack>
+          <Flex alignItems={"center"} justifyContent={"end"} minW="20%">
+            {user?.id ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded="full"
+                  variant="link"
+                  cursor="pointer"
                 >
-                  Sign In
-                </Button>
+                  <Avatar
+                    size="sm"
+                    src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
+                  <MenuItem>Configuración</MenuItem>
+                  <MenuItem onClick={() => signOut()}>
+                    Cerrar Sesión
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
                 <Button
                   as={"a"}
                   display={{ base: "none", md: "inline-flex" }}
@@ -145,11 +138,10 @@ export default function NavBar() {
                   _hover={{
                     bg: "blue.300",
                   }}
-                  onClick={() => setAuth(true)}
+                  onClick={() => openAuthModal()}
                 >
-                  Sign Up
+                  Acceder
                 </Button>
-              </HStack>
             )}
           </Flex>
         </Flex>
@@ -164,6 +156,7 @@ export default function NavBar() {
           </Box>
         ) : null}
       </Box>
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
     </>
   );
 }

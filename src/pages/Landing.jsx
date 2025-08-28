@@ -4,18 +4,21 @@ import {
   Heading,
   Text,
   Button,
-  Separator,
+  Divider,
   VStack,
   HStack,
   Stack,
   Image,
   SimpleGrid,
+  useDisclosure
 } from "@chakra-ui/react";
 import MembershipPlan from "../components/Landing/MembershipPlan";
 import InstructorsSection from "../components/Landing/InstructorsSection";
 import ProductsSection from "../components/Landing/ProductsSection";
+import AuthModal from "../components/Landing/AuthModal";
 
 export default function Landing() {
+    const { isOpen, onOpen, onClose } = useDisclosure();
   const stats = [
     { label: "400+", description: "Happy Members" },
     { label: "20+", description: "Weekly Classes" },
@@ -49,7 +52,7 @@ export default function Landing() {
         </Stack>
       </Box>
       <HStack>
-        <Separator size="sm" flex="1"/>
+        <Divider borderColor="gray.300" flex="1" />
       </HStack>
       <SimpleGrid
         my={5}
@@ -62,30 +65,31 @@ export default function Landing() {
         rounded="4xl"
       >
         {stats.map((s, idx) => (
-          <VStack>
+          <VStack key={idx}>
             <Heading size="3xl">{s.label}</Heading>
             <Text>{s.description}</Text>
           </VStack>
         ))}
       </SimpleGrid>
       <HStack>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
         <Text flexShrink="0">Products</Text>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
       </HStack>
       <ProductsSection />
       <HStack>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
         <Text flexShrink="0">Instructors</Text>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
       </HStack>
       <InstructorsSection />
       <HStack>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
         <Text flexShrink="0">Pricing</Text>
-        <Separator size="sm" flex="1" />
+        <Divider borderColor="gray.300" flex="1" />
       </HStack>
       <MembershipPlan />
+      <AuthModal isOpen={isOpen} onOpen={onOpen}onClose={onClose} />
     </Box>
   );
 }
