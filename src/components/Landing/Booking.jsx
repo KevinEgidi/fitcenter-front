@@ -20,10 +20,20 @@ const Booking = () => {
   const reservarTurno = (e) => {
     e.preventDefault();
 
+    // Generamos valores que tu backend espera
+    const entry = `${fecha} ${hora}`;
+    // Como aún no pedimos hora de salida, ponemos la misma (o podrías sumarle 1 hora si quieres)
+    const exit = `${fecha} ${hora}`;
+
     fetch("http://localhost:3000/booking", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fecha, hora, userId: 1 }),
+      body: JSON.stringify({
+        activity: "Gym", // de momento lo dejamos fijo
+        entry: entry,
+        exit: exit,
+        userId: 1, // luego lo reemplazamos por el usuario logueado
+      }),
     })
       .then((res) => res.json())
       .then((data) => setMensaje("Turno reservado con éxito ✅"))

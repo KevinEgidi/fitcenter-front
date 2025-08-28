@@ -12,7 +12,7 @@
 
 import React, { useEffect, useState } from "react";
 
-const ScheduledAppoiments = () => {
+const ScheduledAppointmentsList = () => {
   const [turnos, setTurnos] = useState([]);
 
   useEffect(() => {
@@ -22,22 +22,19 @@ const ScheduledAppoiments = () => {
       .catch((err) => console.error("Error cargando turnos:", err));
   }, []);
 
+  if (turnos.length === 0) {
+    return <p>No tenés turnos agendados.</p>;
+  }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Turnos Agendados</h2>
-      {turnos.length === 0 ? (
-        <p>No tenés turnos agendados.</p>
-      ) : (
-        <ul>
-          {turnos.map((t) => (
-            <li key={t.id}>
-              {t.fecha} - {t.hora} ({t.actividad})
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul>
+      {turnos.map((t) => (
+        <li key={t.id}>
+          {t.fecha} - {t.hora} ({t.actividad})
+        </li>
+      ))}
+    </ul>
   );
 };
 
-export default ScheduledAppoiments;
+export default ScheduledAppointmentsList;

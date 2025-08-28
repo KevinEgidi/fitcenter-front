@@ -12,25 +12,22 @@
 
 import React, { useEffect, useState } from "react";
 
-const UserProfile = () => {
+const UserProfileCard = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users") // <-- cambia por tu endpoint real
+    fetch("http://localhost:3000/users/1")
       .then((res) => res.json())
       .then((data) => setUser(data))
       .catch((err) => console.error("Error cargando perfil:", err));
   }, []);
 
-  if (!user) {
-    return <p>Cargando perfil...</p>;
-  }
+  if (!user) return <p>Cargando perfil...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Perfil del Usuario</h2>
+    <div>
       <p>
-        <strong>Nombre:</strong> {user.name}
+        <strong>Nombre:</strong> {user.first_name} {user.last_name}
       </p>
       <p>
         <strong>Email:</strong> {user.email}
@@ -38,8 +35,14 @@ const UserProfile = () => {
       <p>
         <strong>Teléfono:</strong> {user.phone}
       </p>
+      <p>
+        <strong>Dirección:</strong> {user.adress}
+      </p>
+      <p>
+        <strong>Usuario:</strong> {user.username}
+      </p>
     </div>
   );
 };
 
-export default UserProfile;
+export default UserProfileCard;

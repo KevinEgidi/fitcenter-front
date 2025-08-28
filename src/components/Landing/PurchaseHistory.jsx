@@ -16,7 +16,7 @@ const PurchaseHistory = () => {
   const [historial, setHistorial] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/appointments/history/1") // <-- cambia endpoint
+    fetch("http://localhost:4000/api/appointments/history/1") // <-- ESTE HAY Q IMPLEMENTARLO EN EL BACK
       .then((res) => res.json())
       .then((data) => setHistorial(data))
       .catch((err) => console.error("Error cargando historial:", err));
