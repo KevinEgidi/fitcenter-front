@@ -18,11 +18,12 @@ export const rutas = [
   <>
     {/* Rutas publicas */}
     <Route path="/" element={<Landing />} />
+    <Route path="/about" element={<About />} />
+    <Route path="/blog" element={<Blog />} />
+    <Route path="/contact" element={<Contact />} />
+    <Route path="/membership" element={<MembershipPlan />} />
     {/* Rutas privadas */}
     <Route element={<ProtectedRoute />}>
-      <Route path="/about" element={<About />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/contact" element={<Contact />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/profile" element={<HomeView />} />
       <Route path="/perfil" element={<UserProfile />} />
@@ -30,7 +31,6 @@ export const rutas = [
       <Route path="/agendados" element={<TurnosAgendados />} />
       <Route path="/historial" element={<HistorialCompra />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/membership" element={<MembershipPlan />} />
     </Route>
   </>,
 ];
