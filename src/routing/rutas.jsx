@@ -22,12 +22,12 @@ export const rutas = [
     <Route path="/blog" element={<Blog />} />
     <Route path="/contact" element={<Contact />} />
     <Route path="/membership" element={<MembershipPlan />} />
+    <Route path="/cart" element={<Cart />} />
+    <Route path="/profile" element={<HomeView />} />
+    <Route path="/perfil" element={<UserProfile />} />
+    <Route path="/turns" element={<Turns />} />
     {/* Rutas privadas */}
     <Route element={<ProtectedRoute />}>
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/profile" element={<HomeView />} />
-      <Route path="/perfil" element={<UserProfile />} />
-      <Route path="/turns" element={<Turns />} />
       <Route path="/agendados" element={<TurnosAgendados />} />
       <Route path="/historial" element={<HistorialCompra />} />
       <Route path="/dashboard" element={<Dashboard />} />
