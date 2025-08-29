@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.getSession();
       if (error) console.error(error);
       setUser(data.session?.user ?? null);
+      setLoading(false);
     };
 
     getSession();
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
+        setLoading(false);
       }
     );
 
@@ -37,10 +39,13 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
     });
-    setLoading(false);
-    if (error) throw error;
+    if (error) {
+      setLoading(false);
+      throw error;
+    }
     setUser(data.user);
-    return user;
+    setLoading(false);
+    return data.user;
   };
 
   const signUp = async (email, password) => {
@@ -49,15 +54,20 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
     });
-    setLoading(false);
-    if (error) throw error;
+    if (error) {
+      setLoading(false);
+      throw error;
+    }
     setUser(data.user);
+    setLoading(false);
     return data.user;
   };
 
   const signOut = async () => {
+    setLoading(true);
     await supabase.auth.signOut();
     setUser(null);
+    setLoading(false);
   };
 
   return (

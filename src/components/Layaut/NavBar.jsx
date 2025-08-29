@@ -15,9 +15,8 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import AuthModal from "../Landing/AuthModal";
-import { IoMdMenu, IoMdAdd, IoMdClose } from "react-icons/io";
+import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 const Links = ["Dashboard", "Cart", "Turns"];
@@ -47,7 +46,10 @@ export default function NavBar() {
   const handleGoToProfile = () => {
     navigate("/profile");
   };
-  const [auth, setAuth] = useState(false);
+  const handleSignOut = () => {
+    navigate("/");
+    signOut();
+  };
 
   console.log(user);
   return (
@@ -121,7 +123,7 @@ export default function NavBar() {
                 <MenuList>
                   <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
                   <MenuItem>Configuración</MenuItem>
-                  <MenuItem onClick={() => signOut()}>
+                  <MenuItem onClick={handleSignOut}>
                     Cerrar Sesión
                   </MenuItem>
                 </MenuList>
@@ -138,7 +140,7 @@ export default function NavBar() {
                   _hover={{
                     bg: "blue.300",
                   }}
-                  onClick={() => openAuthModal()}
+                  onClick={() => !user && openAuthModal()}
                 >
                   Acceder
                 </Button>
