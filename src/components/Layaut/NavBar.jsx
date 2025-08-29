@@ -18,21 +18,19 @@ import AuthModal from "../Landing/AuthModal";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Links = ["Dashboard", "Cart", "Turns"];
 
-const NavLink = (props) => {
-  const { children } = props;
+const NavLink = ({ children, to }) => {
   return (
     <Box
-      as="a"
+      as={Link}
+      to={to}
       px={2}
       py={1}
       rounded={"md"}
-      _hover={{
-        textDecoration: "none",
-      }}
-      href={"#"}
+      _hover={{ textDecoration: "none" }}
     >
       {children}
     </Box>
@@ -41,7 +39,8 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthModalOpen, openAuthModal, closeAuthModal, user, signOut } = useAuth();
+  const { isAuthModalOpen, openAuthModal, closeAuthModal, user, signOut } =
+    useAuth();
   const navigate = useNavigate();
   const handleGoToProfile = () => {
     navigate("/profile");
@@ -84,19 +83,9 @@ export default function NavBar() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Box
-                  key={link}
-                  as="a"
-                  px={2}
-                  py={1}
-                  rounded={"md"}
-                  _hover={{
-                    textDecoration: "none",
-                  }}
-                  href={"#"}
-                >
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
                   {link}
-                </Box>
+                </NavLink>
               ))}
             </HStack>
           </HStack>
@@ -123,27 +112,25 @@ export default function NavBar() {
                 <MenuList>
                   <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
                   <MenuItem>Configuración</MenuItem>
-                  <MenuItem onClick={handleSignOut}>
-                    Cerrar Sesión
-                  </MenuItem>
+                  <MenuItem onClick={() => signOut()}>Cerrar Sesión</MenuItem>
                 </MenuList>
               </Menu>
             ) : (
-                <Button
-                  as={"a"}
-                  display={{ base: "none", md: "inline-flex" }}
-                  fontSize={"sm"}
-                  fontWeight={600}
-                  color={"white"}
-                  bg={"blue.400"}
-                  href={"#"}
-                  _hover={{
-                    bg: "blue.300",
-                  }}
-                  onClick={() => !user && openAuthModal()}
-                >
-                  Acceder
-                </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"blue.400"}
+                href={"#"}
+                _hover={{
+                  bg: "blue.300",
+                }}
+                onClick={() => openAuthModal()}
+              >
+                Acceder
+              </Button>
             )}
           </Flex>
         </Flex>
@@ -152,7 +139,9 @@ export default function NavBar() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>
