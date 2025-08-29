@@ -11,6 +11,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const SocialButton = ({ children, label, href }) => {
   return (
@@ -37,47 +38,39 @@ export default function Footer() {
     <Box borderWidth="1px" roundedTop="lg" shadow="lg">
       <Container
         as={VStack}
-        maxW={'6xl'}
+        maxW={"6xl"}
         py={4}
         spacing={4}
-        justify={'center'}
-        align={'center'}>
+        justify={"center"}
+        align={"center"}
+      >
         <HStack spacing={6}>
-          <Box as="a" href={'#'}>
-            Home
-          </Box>
-          <Box as="a" href={'#'}>
-            About
-          </Box>
-          <Box as="a" href={'#'}>
-            Blog
-          </Box>
-          <Box as="a" href={'#'}>
-            Contact
-          </Box>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/blog">Blog</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
         </HStack>
       </Container>
 
-      <Box
-        borderTopWidth={1}
-        borderStyle={'solid'}>
+      <Box borderTopWidth={1} borderStyle={"solid"}>
         <Container
           as={VStack}
-          maxW={'6xl'}
+          maxW={"6xl"}
           py={4}
-          direction={{ base: 'column', md: 'row' }}
+          direction={{ base: "column", md: "row" }}
           spacing={4}
-          justify={{ base: 'center', md: 'space-between' }}
-          align={{ base: 'center', md: 'center' }}>
+          justify={{ base: "center", md: "space-between" }}
+          align={{ base: "center", md: "center" }}
+        >
           <Text>© 2025 FitCenter. All rights reserved</Text>
           <HStack spacing={6}>
-            <SocialButton label={'Twitter'} href={'#'}>
+            <SocialButton label={"Twitter"} href={"#"}>
               <FaTwitter />
             </SocialButton>
-            <SocialButton label={'YouTube'} href={'#'}>
+            <SocialButton label={"YouTube"} href={"#"}>
               <FaYoutube />
             </SocialButton>
-            <SocialButton label={'Instagram'} href={'#'}>
+            <SocialButton label={"Instagram"} href={"#"}>
               <FaInstagram />
             </SocialButton>
           </HStack>

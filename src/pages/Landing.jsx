@@ -10,15 +10,16 @@ import {
   Stack,
   Image,
   SimpleGrid,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
-import MembershipPlan from "../components/Landing/MembershipPlan";
+import MembershipPlan from "./MembershipPlan";
 import InstructorsSection from "../components/Landing/InstructorsSection";
 import ProductsSection from "../components/Landing/ProductsSection";
 import AuthModal from "../components/Landing/AuthModal";
+import { NavLink } from "react-router-dom";
 
 export default function Landing() {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const stats = [
     { label: "400+", description: "Happy Members" },
     { label: "20+", description: "Weekly Classes" },
@@ -38,10 +39,13 @@ export default function Landing() {
               Join TitanFit and become part of a community that pushes limits
               and inspires greatness.
             </Text>
-            <Button bgColor="blue.500" size="lg">
-              Join Now
-            </Button>
+            <NavLink to="/membership">
+              <Button bgColor="blue.500" size="lg">
+                Join Now
+              </Button>
+            </NavLink>
           </VStack>
+
           <Image
             src="../../public/2150321791.jpg"
             borderRadius="2xl"
@@ -89,7 +93,7 @@ export default function Landing() {
         <Divider borderColor="gray.300" flex="1" />
       </HStack>
       <MembershipPlan />
-      <AuthModal isOpen={isOpen} onOpen={onOpen}onClose={onClose} />
+      <AuthModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
     </Box>
   );
 }
