@@ -3,12 +3,11 @@ import { FaUser } from "react-icons/fa";
 import "./PageStyles.css";
 
 const UserProfile = () => {
-  const [user, setUser] = useState(null); // estado para guardar el usuario
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Aquí llamamos a la API del backend
-    fetch("http://localhost:3000/users/1") // <-- ejemplo con ID 1
+    fetch("http://localhost:3000/users/1") // ejemplo: user con ID 1
       .then((res) => res.json())
       .then((data) => {
         setUser(data);
@@ -31,13 +30,19 @@ const UserProfile = () => {
 
       <div className="card">
         <p>
-          <strong>Nombre:</strong> {user.name}
+          <strong>Nombre:</strong> {user.first_name} {user.last_name}
         </p>
         <p>
           <strong>Email:</strong> {user.email}
         </p>
         <p>
-          <strong>Plan:</strong> {user.plan}
+          <strong>Teléfono:</strong> {user.phone}
+        </p>
+        <p>
+          <strong>Dirección:</strong> {user.address}
+        </p>
+        <p>
+          <strong>Usuario:</strong> {user.username}
         </p>
       </div>
     </div>
