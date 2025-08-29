@@ -7,10 +7,6 @@ import {
   ModalBody,
   ModalFooter,
   VStack,
-  InputGroup,
-  InputRightElement,
-  Select,
-  Input,
   Button,
   Text,
   Tabs,
@@ -19,25 +15,29 @@ import {
   Tab,
   TabPanel,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Switch,
   HStack,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 import { FaPhoneAlt } from "react-icons/fa";
 import { useFormValidation } from "../../utils/useFormValidation";
+import { uploadImage } from "../../utils/uploadImage";
+import ValidatedInput from "../Landing/ValidateInput";
+import PasswordInput from "../Landing/PasswordInput";
+import ImageInput from "../Landing/ImageInput";
 
 export default function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, signIn, signUp } = useAuth();
-
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-
   const [tabIndex, setTabIndex] = useState(0); // 0 = Cliente, 1 = Profesor
-  const [show, setShow] = useState(false);
+  const [disabledSend, setDisabledSend] = useState(true);
+  const toast = useToast();
+
   const { values, errors, handleChange, validateForm, handleResetForm } =
     useFormValidation({
       email: "",
@@ -52,24 +52,53 @@ export default function AuthModal() {
     });
 
   useEffect(() => {
-    if (isLogin) {
-      validateForm(["email", "password"]);
-    } else {
-      validateForm(["email", "password", "nombre", "apellido", "celular"]);
-    }
-  }, [values, isLogin]);
+    const requiredFields = isLogin
+      ? ["email", "password"]
+      : [
+          "nombre",
+          "apellido",
+          "direccion",
+          "celular",
+          "email",
+          "password",
+          "imagen",
+        ].concat(tabIndex === 1 ? ["nroMatricula", "tipoProfesor"] : []);
+    setDisabledSend(
+      requiredFields.some((field) => !values[field] || errors[field])
+    );
+  }, [values, errors, isLogin, tabIndex]);
 
-  const handleClick = () => setShow(!show);
+  const handleSetImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const publicUrl = await uploadImage(file, "images");
+      handleChange("imagen", publicUrl);
+    } catch (err) {
+      Swal.fire({
+        title: "Error subiendo la imagen",
+        text: err.message,
+        icon: "error",
+      });
+    }
+  };
 
   const handleLogin = async () => {
-    if (Object.keys(errors).length != 0) return;
+    const valid = validateForm(["email", "password"]);
+    if (!valid) return;
     setLoading(true);
     try {
       await signIn(values.email, values.password);
-      Swal.fire({ title: "Login exitoso!", icon: "success" });
-      closeAuthModal();
+      toast({
+        title: "Login exitoso!",
+        variant: "solid",
+        isClosable: true,
+        position: "bottom-left",
+        status: "success",
+      });
+      handleCloseModal();
     } catch (err) {
-      closeAuthModal();
+      handleCloseModal();
       Swal.fire({ title: "Error", text: err.message, icon: "error" });
     } finally {
       setLoading(false);
@@ -77,7 +106,19 @@ export default function AuthModal() {
   };
 
   const handleRegister = async () => {
-    if (Object.keys(errors).length != 0) return;
+    const fields = [
+      "nombre",
+      "apellido",
+      "direccion",
+      "celular",
+      "email",
+      "password",
+      "imagen",
+    ];
+    if (tabIndex === 1) fields.push("nroMatricula", "tipoProfesor");
+    const valid = validateForm(fields);
+    if (!valid) return;
+
     setLoading(true);
     try {
       const userData = {
@@ -94,13 +135,16 @@ export default function AuthModal() {
         }),
       };
       await signUp(userData.email, userData.password);
-      Swal.fire({
-        title: "Registro exitoso! Por favor, verifica tu correo.",
-        icon: "success",
+      toast({
+        title: "Registro exitoso! Por favor, verifica tu correo.!",
+        variant: "solid",
+        isClosable: true,
+        position: "bottom-left",
+        status: "success",
       });
-      closeAuthModal();
+      handleCloseModal();
     } catch (err) {
-      closeAuthModal();
+      handleCloseModal();
       Swal.fire({ title: "Error", text: err.message, icon: "error" });
     } finally {
       setLoading(false);
@@ -129,7 +173,7 @@ export default function AuthModal() {
       isOpen={isAuthModalOpen}
       onClose={handleCloseModal}
       isCentered
-      size="lg"
+      size="xl"
     >
       <ModalOverlay />
       <ModalContent>
@@ -139,229 +183,124 @@ export default function AuthModal() {
           <VStack spacing={4}>
             {isLogin ? (
               <>
-                <FormControl isInvalid={errors.email}>
-                  <Input
-                    placeholder="Email"
-                    type="email"
-                    value={values.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                  />
-                  <FormErrorMessage>{errors.email}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={errors.password}>
-                  <InputGroup size="md">
-                    <Input
-                      placeholder="Contraseña"
-                      type={show ? "text" : "password"}
-                      value={values.password}
-                      onChange={(e) => handleChange("password", e.target.value)}
-                    />
-                    <InputRightElement width="4.5rem">
-                      <Button h="1.75rem" size="sm" onClick={handleClick}>
-                        {show ? "Hide" : "Show"}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
+                <ValidatedInput
+                  field="email"
+                  placeholder="Email"
+                  type="email"
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                />
+                <PasswordInput
+                  field="password"
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                />
               </>
             ) : (
-              <>
-                <Tabs
-                  index={tabIndex}
-                  onChange={setTabIndex}
-                  variant="soft-rounded"
-                  colorScheme="blue"
-                  isFitted
-                  isLazy
-                >
-                  <TabList>
-                    <Tab>Cliente</Tab>
-                    <Tab>Profesor</Tab>
-                  </TabList>
-                  <TabPanels>
-                    <TabPanel>
-                      <VStack spacing={3} align="stretch">
+              <Tabs
+                index={tabIndex}
+                onChange={setTabIndex}
+                variant="soft-rounded"
+                colorScheme="blue"
+                isFitted
+                isLazy
+              >
+                <TabList>
+                  <Tab>Cliente</Tab>
+                  <Tab>Profesor</Tab>
+                </TabList>
+                <TabPanels>
+                  {[0, 1].map((idx) => (
+                    <TabPanel key={idx}>
+                      <VStack spacing={4}>
+                        <ImageInput
+                          handleSetImage={handleSetImage}
+                          previewUrl={values.imagen}
+                        />
                         <HStack>
-                          <FormControl isInvalid={errors.nombre}>
-                            <Input
-                              placeholder="Nombre"
-                              value={values.nombre}
-                              onChange={(e) =>
-                                handleChange("nombre", e.target.value)
-                              }
-                            />
-                            <FormErrorMessage>{errors.nombre}</FormErrorMessage>
-                          </FormControl>
-                          <FormControl isInvalid={errors.apellido}>
-                            <Input
-                              placeholder="Apellido"
-                              value={values.apellido}
-                              onChange={(e) =>
-                                handleChange("apellido", e.target.value)
-                              }
-                            />
-                            <FormErrorMessage>
-                              {errors.apellido}
-                            </FormErrorMessage>
-                          </FormControl>
-                        </HStack>
-                        <HStack>
-                          <Input
-                            placeholder="Dirección"
-                            value={values.direccion}
-                            onChange={(e) => handleChange("direccion", e.target.value)}
+                          <ValidatedInput
+                            field="nombre"
+                            placeholder="Nombre"
+                            errors={errors}
+                            values={values}
+                            handleChange={handleChange}
                           />
-                          <InputGroup>
-                            <InputRightElement pointerEvents="none">
-                              <FaPhoneAlt />
-                            </InputRightElement>
-                            <Input
-                              placeholder="Celular"
-                              value={values.celular}
-                              onChange={(e) =>
-                                handleChange("celular", e.target.value)
-                              }
-                            />
-                          </InputGroup>
+                          <ValidatedInput
+                            field="apellido"
+                            placeholder="Apellido"
+                            errors={errors}
+                            values={values}
+                            handleChange={handleChange}
+                          />
                         </HStack>
-                        <Input
+                        <HStack>
+                          <ValidatedInput
+                            field="direccion"
+                            placeholder="Dirección"
+                            errors={errors}
+                            values={values}
+                            handleChange={handleChange}
+                          />
+                          <ValidatedInput
+                            field="celular"
+                            placeholder="Celular"
+                            inputProps={{
+                              InputRightElement: <FaPhoneAlt />,
+                            }}
+                            errors={errors}
+                            values={values}
+                            handleChange={handleChange}
+                          />
+                        </HStack>
+                        <ValidatedInput
+                          field="email"
                           placeholder="Email"
                           type="email"
-                          value={values.email}
-                          onChange={(e) =>
-                            handleChange("email", e.target.value)
-                          }
+                          errors={errors}
+                          values={values}
+                          handleChange={handleChange}
                         />
-                        <InputGroup size="md">
-                          <Input
-                            placeholder="Contraseña"
-                            type="password"
-                            value={values.password}
-                            onChange={(e) =>
-                              handleChange("password", e.target.value)
-                            }
-                          />
-                          <InputRightElement width="4.5rem">
-                            <Button h="1.75rem" size="sm" onClick={handleClick}>
-                              {show ? "Hide" : "Show"}
-                            </Button>
-                          </InputRightElement>
-                        </InputGroup>
-                        <Input
-                          type="file"
-                          accept="image/*, text/*"
-                          name="file"
-                          placeholder="URL Imagen de Perfil"
-                          value={values.imagen}
-                          onChange={(e) =>
-                            handleChange("imagen", e.target.value)
-                          }
+                        <PasswordInput
+                          field="password"
+                          errors={errors}
+                          values={values}
+                          handleChange={handleChange}
                         />
+                        {tabIndex === 1 && (
+                          <>
+                            <ValidatedInput
+                              type="nroMatricula"
+                              field="nroMatricula"
+                              placeholder="Numero de Matricula"
+                              errors={errors}
+                              values={values}
+                              handleChange={handleChange}
+                            />
+                            <FormControl display="flex" alignItems="center">
+                              <FormLabel htmlFor="instructor" mb="0">
+                                Instructor
+                              </FormLabel>
+                              <Switch
+                                id="instructor"
+                                isChecked={values.tipoProfesor}
+                                onChange={(e) =>
+                                  handleChange("tipoProfesor", e.target.checked)
+                                }
+                              />
+                            </FormControl>
+                          </>
+                        )}
                       </VStack>
                     </TabPanel>
-                    <TabPanel>
-                      <VStack spacing={3} align="stretch">
-                        <HStack>
-                          <FormControl isInvalid={errors.nombre}>
-                            <Input
-                              placeholder="Nombre"
-                              value={values.nombre}
-                              onChange={(e) =>
-                                handleChange("nombre", e.target.value)
-                              }
-                            />
-                            <FormErrorMessage>{errors.nombre}</FormErrorMessage>
-                          </FormControl>
-                          <FormControl isInvalid={errors.apellido}>
-                            <Input
-                              placeholder="Apellido"
-                              value={values.apellido}
-                              onChange={(e) =>
-                                handleChange("apellido", e.target.value)
-                              }
-                            />
-                            <FormErrorMessage>
-                              {errors.apellido}
-                            </FormErrorMessage>
-                          </FormControl>
-                        </HStack>
-                        <HStack>
-                          <Input
-                            placeholder="Dirección"
-                            value={values.direccion}
-                            onChange={(e) =>
-                              handleChange("direccion", e.target.value)
-                            }
-                          />
-                          <InputGroup>
-                            <InputRightElement pointerEvents="none">
-                              <FaPhoneAlt />
-                            </InputRightElement>
-                            <Input
-                              placeholder="Celular"
-                              value={values.celular}
-                              onChange={(e) =>
-                                handleChange("celular", e.target.value)
-                              }
-                            />
-                          </InputGroup>
-                        </HStack>
-                        <Input
-                          placeholder="Email"
-                          type="email"
-                          value={values.email}
-                          onChange={(e) =>
-                            handleChange("email", e.target.value)
-                          }
-                        />
-                        <Input
-                          placeholder="Contraseña"
-                          type="password"
-                          value={values.password}
-                          onChange={(e) =>
-                            handleChange("password", e.target.value)
-                          }
-                        />
-                        <Input
-                          type="file"
-                          accept="image/*, text/*"
-                          name="file"
-                          placeholder="URL Imagen de Perfil"
-                          value={values.imagen}
-                          onChange={(e) =>
-                            handleChange("imagen", e.target.value)
-                          }
-                        />
-                        <Input
-                          placeholder="Nro Matricula"
-                          value={values.nroMatricula}
-                          onChange={(e) =>
-                            handleChange("nroMatricula", e.target.value)
-                          }
-                        />
-                        <FormControl display="flex" alignItems="center">
-                          <FormLabel htmlFor="instructor" mb="0">
-                            Instructor
-                          </FormLabel>
-                          <Switch
-                            id="instructor"
-                            value={values.tipoProfesor}
-                            onChange={(e) =>
-                              handleChange("tipoProfesor", e.target.value)
-                            }
-                          />
-                        </FormControl>
-                      </VStack>
-                    </TabPanel>
-                  </TabPanels>
-                </Tabs>
-              </>
+                  ))}
+                </TabPanels>
+              </Tabs>
             )}
           </VStack>
 
           <Text
-            mt={4}
             fontSize="sm"
             textAlign="center"
             color="blue.500"
@@ -379,6 +318,7 @@ export default function AuthModal() {
             isLoading={loading}
             w="full"
             onClick={isLogin ? handleLogin : handleRegister}
+            isDisabled={disabledSend}
           >
             {isLogin ? "Login" : "Registrar"}
           </Button>
