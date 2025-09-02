@@ -12,7 +12,6 @@ import TurnosAgendados from "../components/Landing/TurnosAgendados";
 import HistorialCompra from "../components/Landing/HistorialCompra";
 import Dashboard from "../pages/Dashboard";
 import { ProtectedRoute } from "./ProtectedRoute";
-import MembershipPlan from "../pages/MembershipPlan";
 
 export const rutas = [
   <>
@@ -21,7 +20,6 @@ export const rutas = [
     <Route path="/about" element={<About />} />
     <Route path="/blog" element={<Blog />} />
     <Route path="/contact" element={<Contact />} />
-    <Route path="/membership" element={<MembershipPlan />} />
     <Route path="/cart" element={<Cart />} />
     <Route path="/profile" element={<HomeView />} />
     <Route path="/perfil" element={<UserProfile />} />

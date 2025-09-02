@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Heading,
@@ -11,21 +11,77 @@ import {
   Image,
   SimpleGrid,
   useDisclosure,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import MembershipPlan from "./MembershipPlan";
 import InstructorsSection from "../components/Landing/InstructorsSection";
 import ProductsSection from "../components/Landing/ProductsSection";
 import AuthModal from "../components/Landing/AuthModal";
-import { NavLink } from "react-router-dom";
 
 export default function Landing() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const pricingRef = useRef();
+  const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio
+
   const stats = [
     { label: "400+", description: "Happy Members" },
     { label: "20+", description: "Weekly Classes" },
     { label: "8+", description: "Certified Trainers" },
     { label: "99%", description: "Customer Satisfaction" },
   ];
+
+  const handleJoinNow = () => {
+    // Solo se abre el acordeon de precios si es que esta cerrado
+    if (!isPricingOpen && pricingRef.current) {
+      pricingRef.current.click();
+      setIsPricingOpen(true);
+    }
+    setTimeout(() => {
+      document
+        .getElementById("membership-section")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }, 200);
+  };
+
+  // Acordeón independiente reutilizable
+  const SectionAccordion = ({ title, children }) => (
+    <Accordion allowToggle defaultIndex={[0]} mb={8}>
+      <AccordionItem border="none">
+        {({ isExpanded }) => (
+          <>
+            <h2>
+              <AccordionButton justifyContent="center" py={4}>
+                <HStack w="100%">
+                  <Divider borderColor="gray.300" flex="1" />
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontWeight="bold"
+                    fontSize="lg"
+                    whiteSpace="nowrap"
+                  >
+                    <Text mr={2}>{title}</Text>
+                    <AccordionIcon
+                      transform={isExpanded ? "rotate(0deg)" : "rotate(180deg)"}
+                      transition="transform 0.2s"
+                    />
+                  </Box>
+                  <Divider borderColor="gray.300" flex="1" />
+                </HStack>
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>{children}</AccordionPanel>
+          </>
+        )}
+      </AccordionItem>
+    </Accordion>
+  );
+
   return (
     <Box p={4}>
       <Box mt={4} mb={4} bg="blue.50" py={2} px={10} borderRadius="3xl">
@@ -39,11 +95,9 @@ export default function Landing() {
               Join TitanFit and become part of a community that pushes limits
               and inspires greatness.
             </Text>
-            <NavLink to="/membership">
-              <Button bgColor="blue.500" size="lg">
-                Join Now
-              </Button>
-            </NavLink>
+            <Button bgColor="blue.500" size="lg" onClick={handleJoinNow}>
+              Join Now
+            </Button>
           </VStack>
 
           <Image
@@ -55,9 +109,7 @@ export default function Landing() {
           />
         </Stack>
       </Box>
-      <HStack>
-        <Divider borderColor="gray.300" flex="1" />
-      </HStack>
+
       <SimpleGrid
         my={5}
         columns={[1, 2, 4]}
@@ -75,24 +127,58 @@ export default function Landing() {
           </VStack>
         ))}
       </SimpleGrid>
-      <HStack>
-        <Divider borderColor="gray.300" flex="1" />
-        <Text flexShrink="0">Products</Text>
-        <Divider borderColor="gray.300" flex="1" />
-      </HStack>
-      <ProductsSection />
-      <HStack>
-        <Divider borderColor="gray.300" flex="1" />
-        <Text flexShrink="0">Instructors</Text>
-        <Divider borderColor="gray.300" flex="1" />
-      </HStack>
-      <InstructorsSection />
-      <HStack>
-        <Divider borderColor="gray.300" flex="1" />
-        <Text flexShrink="0">Pricing</Text>
-        <Divider borderColor="gray.300" flex="1" />
-      </HStack>
-      <MembershipPlan />
+
+      <SectionAccordion title="Products">
+        <ProductsSection />
+      </SectionAccordion>
+
+      <SectionAccordion title="Instructors">
+        <InstructorsSection />
+      </SectionAccordion>
+
+      <Accordion allowToggle defaultIndex={[0]} mb={8}>
+        <AccordionItem border="none">
+          {({ isExpanded }) => (
+            <>
+              <h2>
+                <AccordionButton
+                  justifyContent="center"
+                  py={4}
+                  ref={pricingRef}
+                  onClick={() => setIsPricingOpen(!isExpanded)}
+                >
+                  <HStack w="100%">
+                    <Divider borderColor="gray.300" flex="1" />
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      fontWeight="bold"
+                      fontSize="lg"
+                      whiteSpace="nowrap"
+                    >
+                      <Text mr={2}>Pricing</Text>
+                      <AccordionIcon
+                        transform={
+                          isExpanded ? "rotate(0deg)" : "rotate(180deg)"
+                        }
+                        transition="transform 0.2s"
+                      />
+                    </Box>
+                    <Divider borderColor="gray.300" flex="1" />
+                  </HStack>
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <Box id="membership-section">
+                  <MembershipPlan />
+                </Box>
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
+      </Accordion>
+
       <AuthModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
     </Box>
   );

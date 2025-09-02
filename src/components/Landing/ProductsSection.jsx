@@ -17,8 +17,6 @@ export default function ProductsSection() {
 
   return (
     <Container maxW="container.lg" py={10}>
-      <Heading mb={6}>Productos</Heading>
-
       <Carousel
         items={products}
         visibleCount={3}

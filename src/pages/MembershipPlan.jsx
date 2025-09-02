@@ -50,6 +50,7 @@ export default function Membership() {
       <HStack spacing={6} align="flex-start">
         {plans.map((plan) => (
           <Box
+            id="membership-section"
             key={plan.name}
             maxW={"330px"}
             w={"full"}
