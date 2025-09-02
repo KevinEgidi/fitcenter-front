@@ -11,13 +11,7 @@ const ImageInput = ({ handleSetImage, previewUrl }) => {
 
   return (
     <HStack alignItems="center" justifyContent="space-between">
-      {previewUrl ? (
         <Avatar size="xl" src={previewUrl} alt="Preview" />
-      ) : (
-        <>
-          <Avatar size="xl" src="https://bit.ly/broken-link" />
-        </>
-      )}
       <Button
         leftIcon={<IoIosAddCircleOutline />}
         colorScheme="blue"
