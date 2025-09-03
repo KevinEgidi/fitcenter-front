@@ -1,6 +1,6 @@
 import React from "react";
 
-const Turnos = () => {
+const Turns = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Vista para sacar turno</h2>
@@ -8,4 +8,4 @@ const Turnos = () => {
   );
 };
 
-export default Turnos;
+export default Turns;
