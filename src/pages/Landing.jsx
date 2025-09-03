@@ -16,16 +16,24 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  useToast,
 } from "@chakra-ui/react";
-import MembershipPlan from "./MembershipPlan";
+import Swal from "sweetalert2";
+import MembershipPlan from "../components/Landing/MembershipPlan";
 import InstructorsSection from "../components/Landing/InstructorsSection";
 import ProductsSection from "../components/Landing/ProductsSection";
 import AuthModal from "../components/Landing/AuthModal";
+import { useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Landing() {
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const pricingRef = useRef();
   const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio
+  const toast = useToast();
+  const { signInWithGoogle } = useAuth();
+
 
   const stats = [
     { label: "400+", description: "Happy Members" },
@@ -81,6 +89,31 @@ export default function Landing() {
       </AccordionItem>
     </Accordion>
   );
+
+
+ useEffect(() => {
+  const handleOAuth = async () => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const access_token = hashParams.get("access_token");
+    if (access_token) {
+      try {
+        await signInWithGoogle(access_token);
+        toast({
+        title: "Inicio con Google exitoso!",
+        variant: "solid",
+        isClosable: true,
+        position: "bottom-left",
+        status: "success",
+      });
+       window.history.replaceState(null, "", window.location.pathname);
+      } catch (err) {
+        Swal.fire({ title: "Error en login con Google", text: err.message, icon: "error" });
+      }
+    }
+  };
+  handleOAuth();
+}, []);
+  
 
   return (
     <Box p={4}>

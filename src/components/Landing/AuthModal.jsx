@@ -21,21 +21,23 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 import { FaPhoneAlt } from "react-icons/fa";
 import { useFormValidation } from "../../utils/useFormValidation";
-import { uploadImage } from "../../utils/uploadImage";
 import ValidatedInput from "../Landing/ValidateInput";
 import PasswordInput from "../Landing/PasswordInput";
 import ImageInput from "../Landing/ImageInput";
+import { FcGoogle } from "react-icons/fc";
 
 export default function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, signIn, signUp } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, signIn, signUp, user } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0); // 0 = Cliente, 1 = Profesor
   const [disabledSend, setDisabledSend] = useState(true);
+  const navigate = useNavigate();
   const toast = useToast();
 
   const { values, errors, handleChange, validateForm, handleResetForm } =
@@ -46,7 +48,7 @@ export default function AuthModal() {
       apellido: "",
       direccion: "",
       celular: "",
-      imagen: "",
+      imagen: "https://bit.ly/broken-link", // imagen por defecto
       nroMatricula: "",
       tipoProfesor: false,
     });
@@ -54,33 +56,30 @@ export default function AuthModal() {
   useEffect(() => {
     const requiredFields = isLogin
       ? ["email", "password"]
-      : [
-          "nombre",
-          "apellido",
-          "direccion",
-          "celular",
-          "email",
-          "password",
-          "imagen",
-        ].concat(tabIndex === 1 ? ["nroMatricula", "tipoProfesor"] : []);
+      : ["email", "password"].concat(
+          tabIndex === 1 ? ["nroMatricula", "tipoProfesor"] : []
+        );
     setDisabledSend(
       requiredFields.some((field) => !values[field] || errors[field])
     );
   }, [values, errors, isLogin, tabIndex]);
 
-  const handleSetImage = async (e) => {
+  const handleSetImage = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    try {
-      const publicUrl = await uploadImage(file, "images");
-      handleChange("imagen", publicUrl);
-    } catch (err) {
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      handleChange("imagen", reader.result);
+    };
+    reader.onerror = (error) => {
       Swal.fire({
-        title: "Error subiendo la imagen",
-        text: err.message,
+        title: "Error al leer archivo",
+        text: error.message,
         icon: "error",
       });
-    }
+    };
   };
 
   const handleLogin = async () => {
@@ -96,6 +95,9 @@ export default function AuthModal() {
         position: "bottom-left",
         status: "success",
       });
+      if (user?.role === "admin") {
+        navigate("/dashboard");
+      }
       handleCloseModal();
     } catch (err) {
       handleCloseModal();
@@ -103,6 +105,10 @@ export default function AuthModal() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:3000/users/auth/google";
   };
 
   const handleRegister = async () => {
@@ -120,21 +126,31 @@ export default function AuthModal() {
     if (!valid) return;
 
     setLoading(true);
+    let rolUser = "";
+    if (tabIndex === 1) {
+      if (tipoProfesor) {
+        rolUser = "instructor";
+      } else {
+        rolUser = "professor";
+      }
+    } else {
+      rolUser = "client";
+    }
     try {
       const userData = {
-        nombre: values.nombre,
-        apellido: values.apellido,
-        direccion: values.direccion,
-        celular: values.celular,
+        first_name: values.nombre,
+        last_name: values.apellido,
+        address: values.direccion,
+        phone: values.celular,
         email: values.email,
         password: values.password,
-        imagen: values.imagen,
+        image: values.imagen,
+        role: rolUser,
         ...(tabIndex === 1 && {
-          nroMatricula: values.nroMatricula,
-          tipoProfesor: values.tipoProfesor,
+          registration_number: values.nroMatricula,
         }),
       };
-      await signUp(userData.email, userData.password);
+      await signUp(userData);
       toast({
         title: "Registro exitoso! Por favor, verifica tu correo.!",
         variant: "solid",
@@ -177,7 +193,9 @@ export default function AuthModal() {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{isLogin ? "Login" : "Registro"}</ModalHeader>
+        <ModalHeader fontSize="md" textAlign="center">
+          {isLogin ? "Login" : "Registro"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4}>
@@ -301,6 +319,7 @@ export default function AuthModal() {
           </VStack>
 
           <Text
+            my={2}
             fontSize="sm"
             textAlign="center"
             color="blue.500"
@@ -311,6 +330,28 @@ export default function AuthModal() {
               ? "¿No tienes cuenta? Regístrate"
               : "¿Ya tienes cuenta? Inicia sesión"}
           </Text>
+          <VStack spacing={4} align="center" mt={2}>
+            <Button
+              mx="auto"
+              w="100%"
+              bg="white"
+              color="gray.700"
+              border="1px solid"
+              borderColor="gray.300"
+              leftIcon={<FcGoogle />}
+              _hover={{
+                bg: "blue.600",
+                color: "white",
+              }}
+              _active={{
+                bg: "blue.700",
+                color: "white",
+              }}
+              onClick={handleGoogleLogin}
+            >
+              {isLogin ? "Iniciar sesión con Google" : "Registrarse con Google"}
+            </Button>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button
