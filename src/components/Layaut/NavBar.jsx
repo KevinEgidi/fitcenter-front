@@ -15,25 +15,22 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import AuthModal from "../Landing/AuthModal";
-import { IoMdMenu, IoMdAdd, IoMdClose } from "react-icons/io";
+import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Links = ["Dashboard", "Cart", "Turns"];
 
-const NavLink = (props) => {
-  const { children } = props;
+const NavLink = ({ children, to }) => {
   return (
     <Box
-      as="a"
+      as={Link}
+      to={to}
       px={2}
       py={1}
       rounded={"md"}
-      _hover={{
-        textDecoration: "none",
-      }}
-      href={"#"}
+      _hover={{ textDecoration: "none" }}
     >
       {children}
     </Box>
@@ -42,14 +39,17 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthModalOpen, openAuthModal, closeAuthModal, user, signOut } = useAuth();
+  const { isAuthModalOpen, openAuthModal, closeAuthModal, user, signOut } =
+    useAuth();
   const navigate = useNavigate();
   const handleGoToProfile = () => {
     navigate("/profile");
   };
-  const [auth, setAuth] = useState(false);
+  const handleSignOut = () => {
+    navigate("/");
+    signOut();
+  };
 
-  console.log(user);
   return (
     <>
       <Box p={2}>
@@ -82,19 +82,9 @@ export default function NavBar() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Box
-                  key={link}
-                  as="a"
-                  px={2}
-                  py={1}
-                  rounded={"md"}
-                  _hover={{
-                    textDecoration: "none",
-                  }}
-                  href={"#"}
-                >
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
                   {link}
-                </Box>
+                </NavLink>
               ))}
             </HStack>
           </HStack>
@@ -105,7 +95,7 @@ export default function NavBar() {
             </Button>
           </HStack>
           <Flex alignItems={"center"} justifyContent={"end"} minW="20%">
-            {user?.id ? (
+            {(user != null) ? (
               <Menu>
                 <MenuButton
                   as={Button}
@@ -115,33 +105,31 @@ export default function NavBar() {
                 >
                   <Avatar
                     size="sm"
-                    src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                    src={user.image_url}
                   />
                 </MenuButton>
                 <MenuList>
                   <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
                   <MenuItem>Configuración</MenuItem>
-                  <MenuItem onClick={() => signOut()}>
-                    Cerrar Sesión
-                  </MenuItem>
+                  <MenuItem onClick={() => signOut()}>Cerrar Sesión</MenuItem>
                 </MenuList>
               </Menu>
             ) : (
-                <Button
-                  as={"a"}
-                  display={{ base: "none", md: "inline-flex" }}
-                  fontSize={"sm"}
-                  fontWeight={600}
-                  color={"white"}
-                  bg={"blue.400"}
-                  href={"#"}
-                  _hover={{
-                    bg: "blue.300",
-                  }}
-                  onClick={() => openAuthModal()}
-                >
-                  Acceder
-                </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"blue.400"}
+                href={"#"}
+                _hover={{
+                  bg: "blue.300",
+                }}
+                onClick={() => openAuthModal()}
+              >
+                Acceder
+              </Button>
             )}
           </Flex>
         </Flex>
@@ -150,7 +138,9 @@ export default function NavBar() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>

@@ -32,7 +32,7 @@ const Booking = () => {
         activity: "Gym", // de momento lo dejamos fijo
         entry: entry,
         exit: exit,
-        // userId: 1, // luego lo reemplazamos por el usuario logueado harbia q ver como conectarlo
+        userId: 1, // luego lo reemplazamos por el usuario logueado harbia q ver como conectarlo
       }),
     })
       .then((res) => res.json())
