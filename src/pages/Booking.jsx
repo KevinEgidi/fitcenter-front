@@ -71,7 +71,7 @@ const Booking = () => {
 
   const handleSubmit = async () => {
     try {
-      await fetch("http://localhost:3000/bookings", {
+      await fetch("http://localhost:3000/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
