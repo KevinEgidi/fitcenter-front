@@ -1,4 +1,6 @@
 import React from "react";
+import { Outlet, Link } from "react-router-dom";
+import Acordion from '../components/Dashboard/Accordion';
 import {
   Box,
   Flex,
@@ -47,6 +49,7 @@ const Dashboard = () => {
   return (
     <Flex minH="100vh" bg="gray.500">
 
+      {/* Vertical navbar */}
       <Box
         w="240px"
         bg="gray.800"
@@ -62,50 +65,20 @@ const Dashboard = () => {
         </Heading>
 
         <VStack align="start" spacing={4}>
-          <Text>📊 Dashboard</Text>
-          {/* <Text>✉️ Email</Text> */}
           <Box h="1" bg="gray.600" w="100%" />
-          <Button bgColor={'grey'} w={"100%"}>⚙️ Sucursales</Button>
-          <Button bgColor={'grey'} w={"100%"}>📦 Membresías</Button>
-          <Button bgColor={'grey'} w={"100%"}>📉 Turnos</Button>
-          <Button bgColor={'grey'} w={"100%"}>📉 Clases</Button>
-          <Button bgColor={'grey'} w={"100%"}>📊 Rutinas</Button>
-          <Button bgColor={'grey'} w={"100%"}>✉️ Ejercicios</Button>
-          
-          
-          <Accordion.Root multiple>
-            <Accordion.Item >
-                <Accordion.ItemTrigger>
-                <Span flex="1"><Text>👤 Personal</Text></Span>
-                <Accordion.ItemIndicator />
-                </Accordion.ItemTrigger>
-                <Accordion.ItemContent>
-                <Accordion.ItemBody><Box p={1}><Button bgColor={'grey'} w={"100%"}>👤 Administradores</Button></Box></Accordion.ItemBody>
-                <Accordion.ItemBody><Box p={1}><Button bgColor={'grey'} w={"100%"}>👤 Profesores</Button></Box></Accordion.ItemBody>
-                <Accordion.ItemBody><Box p={1}><Button bgColor={'grey'} w={"100%"}>👤 Instructores</Button></Box></Accordion.ItemBody>
-                <Accordion.ItemBody><Box p={1}><Button bgColor={'grey'} w={"100%"}>👤 Clientes</Button></Box></Accordion.ItemBody>
-                </Accordion.ItemContent>
-            </Accordion.Item>
-            </Accordion.Root>
-
-          <Box h="1" bg="gray.600" w="100%" />
-
-          <Button bgColor={'grey'} w={"100%"}>⚙️ Categorías</Button>
-          <Button bgColor={'grey'} w={"100%"}>⚙️ Productos</Button>
-          <Button bgColor={'grey'} w={"100%"}>⚙️ Órdenes</Button>
-          <Text>👤 Perfil</Text>
+          <Acordion/>
         </VStack>
       </Box>
 
       {/* Main */}
       <Box flex="1" p={6}>
-        <Box bg="orange.100" color="orange.800" py={2} px={4} mb={6} borderRadius="md">
+        {/* <Box bg="orange.100" color="orange.800" py={2} px={4} mb={6} borderRadius="md">
           <Text fontWeight="bold">
             Se ha registrado un nuevo socio
           </Text>
-        </Box>
+        </Box> */}
 
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={6}>
+        {/* <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={6}>
           <StatCard title="Ventas en productos" value="$1M" color="purple.500" />
           <StatCard title="Clases dictadas totales" value="1369" color="blue.400" />
           <StatCard title="Profesores activos" value="567" color="red.400"/>
@@ -131,7 +104,9 @@ const Dashboard = () => {
               No hay cambios
             </Text>
           </Box>
-        </SimpleGrid>
+        </SimpleGrid> */}
+        <Outlet />
+
       </Box>
     </Flex>
   );
