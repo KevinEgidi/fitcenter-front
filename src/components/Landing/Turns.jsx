@@ -1,11 +1,11 @@
 import React from "react";
 
-const TurnosAgendados = () => {
+const Turns = () => {
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Turnos agendados</h2>
+      <h2>Vista para sacar turno</h2>
     </div>
   );
 };
 
-export default TurnosAgendados;
+export default Turns;
