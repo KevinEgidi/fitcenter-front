@@ -25,7 +25,7 @@ import AuthModal from "../components/Landing/AuthModal";
 export default function Landing() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const pricingRef = useRef();
-  const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio
+  const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio hola
 
   const stats = [
     { label: "400+", description: "Happy Members" },
