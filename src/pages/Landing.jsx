@@ -33,6 +33,7 @@ export default function Landing() {
   const toast = useToast();
   const { signInWithGoogle } = useAuth();
 
+
   const stats = [
     { label: "400+", description: "Happy Members" },
     { label: "20+", description: "Weekly Classes" },
