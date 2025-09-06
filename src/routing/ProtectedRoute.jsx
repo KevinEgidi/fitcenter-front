@@ -27,7 +27,7 @@ export const ProtectedRoute = () => {
     </Flex>
   )}
   else {
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
+    return user ? <Outlet /> : <Navigate to="/" replace />;
   }
 };
 

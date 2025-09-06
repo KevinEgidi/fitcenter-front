@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "../utils/supabaseConfig";
 
 const AuthContext = createContext();
 
@@ -12,60 +11,98 @@ export const AuthProvider = ({ children }) => {
   const closeAuthModal = () => setAuthModalOpen(false);
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) console.error(error);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    };
-
-    getSession();
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/users/session", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("No autenticado");
+        const data = await res.json();
+        setUser(data.data);
+      } catch (err) {
+        setUser(null);
+      } finally {
         setLoading(false);
       }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
     };
+    fetchUser();
   }, []);
+
+  const signInWithGoogle = async (token) => {
+  setLoading(true);
+  try {
+    const res = await fetch("http://localhost:3000/users/auth/google/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ token }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || "Error con Google login");
+    setUser(result.data);
+    return result.data;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const signIn = async (email, password) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
+    if (!email || !password) {
       setLoading(false);
-      throw error;
+      throw new Error("Por favor, complete todos los campos");
     }
-    setUser(data.user);
+    const res = await fetch("http://localhost:3000/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      setLoading(false);
+      throw new Error(result.msg || "Error al iniciar sesión");
+    }
+    setUser(result.data);
     setLoading(false);
-    return data.user;
+    return result.data;
   };
 
-  const signUp = async (email, password) => {
+  const signUp = async (userData) => {
+    try {
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) {
+    if (!userData.email || !userData.password) {
       setLoading(false);
-      throw error;
+      throw new Error("Por favor, complete todos los campos");
     }
-    setUser(data.user);
+    const res = await fetch("http://localhost:3000/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(userData),
+    });
+
+     const result = await res.json();
+    if (!res.ok) {
+      setLoading(false);
+      throw new Error(result.message || "Error al registrarse");
+    }
+    console.log(result)
+
+    setUser(result.data);
     setLoading(false);
-    return data.user;
+    return result.data;
+  } catch (error) {
+    throw new Error(error.message || "Error al registrarse");
+  }
   };
 
   const signOut = async () => {
     setLoading(true);
-    await supabase.auth.signOut();
+    await fetch("http://localhost:3000/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     setUser(null);
     setLoading(false);
   };
@@ -81,6 +118,7 @@ export const AuthProvider = ({ children }) => {
         isAuthModalOpen,
         openAuthModal,
         closeAuthModal,
+        signInWithGoogle
       }}
     >
       {children}
