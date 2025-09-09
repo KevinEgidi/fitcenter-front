@@ -29,13 +29,9 @@ import { useAuth } from "../context/AuthContext";
 export default function Landing() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const pricingRef = useRef();
-<<<<<<< HEAD
-  const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio hola
-=======
   const [isPricingOpen, setIsPricingOpen] = useState(true); // Acordeones abiertos desde el inicio
   const toast = useToast();
   const { signInWithGoogle } = useAuth();
->>>>>>> main
 
   const stats = [
     { label: "400+", description: "Happy Members" },
