@@ -204,7 +204,7 @@ export default function Landing() {
               </h2>
               <AccordionPanel pb={4}>
                 <Box id="membership-section">
-                  <MembershipPlan />
+                  {/* <MembershipPlan /> */}
                 </Box>
               </AccordionPanel>
             </>

@@ -3,97 +3,172 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
   Heading,
-  IconButton,
-  Pagination,
   Stack,
   Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  FormControl,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react"
-import { FaEdit } from "react-icons/fa"
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+import Swal from "sweetalert2";
+import AddProduct from "../components/Dashboard/AddProduct";
+import { useEffect, useState } from "react";
+import EditProduct from "../components/Dashboard/EditProduct";
+import { SearchIcon } from "@chakra-ui/icons";
 
 const Products = () => {
+
+    const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showActive, setShowActive] = useState(true);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      fetch("http://localhost:3000/products")
+        .then((res) => res.json())
+        .then((data) => {
+          
+          setProducts(data.data);
+          setFilteredProducts(data.data);
+          console.log("DATA", data.data);
+          console.log("PRODUCTS", products);
+        })
+        .catch((err) => {
+          console.error("Error cargando productos:", err);
+          Swal.fire({ title: "Error", text: err, icon: "error" })
+          .then(() => {
+            location.reload();
+          });
+        });
+    }, []);
+
+
+    //FILTRO DE BUSQUEDA Y PRECIO
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
+
+    const handleSearch = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTerm(value);
+      applyFilters(value, minPrice, maxPrice);
+    };
+
+    const handleMinPrice = (e) => {
+      const value = e.target.value;
+      setMinPrice(value);
+      applyFilters(searchTerm, value, maxPrice);
+    };
+
+    const handleMaxPrice = (e) => {
+      const value = e.target.value;
+      setMaxPrice(value);
+      applyFilters(searchTerm, minPrice, value);
+    };
+
+    
+    const applyFilters = (searchValue, min, max) => {
+      const filtered = products.filter((p) => {
+        const matchesSearch =
+          p.name.toLowerCase().includes(searchValue) ||
+          p.category.name.toLowerCase().includes(searchValue) ||
+          p.description.toLowerCase().includes(searchValue);
+
+        const matchesPrice =
+          (!min || p.price >= parseFloat(min)) &&
+          (!max || p.price <= parseFloat(max));
+
+        return matchesSearch && matchesPrice;
+      });
+
+      setFilteredProducts(filtered);
+    };
+
+  
   return (
-    <Box
-    bg={"white"}
-    p={3}
-    borderRadius={"10px"}>
-
+    <Box bg={"white"} p={3} borderRadius={"10px"}>
       <Stack width="full" gap="5">
+        <Flex justifyContent={"space-between"}>
+          <Heading size="xl">Products</Heading>
 
-      <Flex
-      justifyContent={"space-between"}
-      >
-        <Heading size="xl">Products</Heading>
-        <Button bgColor={"black"}>Add product</Button>
-      </Flex>
-      
-      
+          <InputGroup w={400}>
+            <InputLeftElement pointerEvents='none'>
+              <SearchIcon color='gray.300' />
+            </InputLeftElement>
+            <Input
+              placeholder='Buscar por nombre, categoría o descripción'
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </InputGroup>
 
-      <Table.Root size="xl" variant="outline" showColumnBorder rounded="md" interactive>
+            <Input
+              w={100}
+              type="number"
+              placeholder="Precio min"
+              value={minPrice}
+              onChange={handleMinPrice}
+            />
 
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>Product</Table.ColumnHeader>
-            <Table.ColumnHeader>Category</Table.ColumnHeader>
-            <Table.ColumnHeader>Price</Table.ColumnHeader>
-            <Table.ColumnHeader>Edit</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {items.map((item) => (
-            <Table.Row key={item.id}>
-              <Table.Cell>{item.name}</Table.Cell>
-              <Table.Cell>{item.category}</Table.Cell>
-              <Table.Cell>{item.price}</Table.Cell>
-              <Table.Cell>Edit</Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-
-      </Table.Root>
+            <Input
+              w={100}
+              type="number"
+              placeholder="Precio max"
+              value={maxPrice}
+              onChange={handleMaxPrice}
+            />
 
 
+          <AddProduct/>
+        </Flex>
 
+        <Table size="md" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Product</Th>
+              <Th>Category</Th>
+              <Th>Description</Th>
+              <Th>Stock</Th>
+              <Th>Price</Th>
+              <Th>Edit</Th>
+            </Tr>
+          </Thead>
 
-      <Pagination.Root count={items.length * 5} pageSize={5} page={1}>
-        <ButtonGroup variant="ghost" size="sm" wrap="wrap">
-          <Pagination.PrevTrigger asChild>
-            <IconButton>
-              <LuChevronLeft />
-            </IconButton>
-          </Pagination.PrevTrigger>
+          <Tbody>
+            {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <Tr key={product.id}>
+                    <Td>{product.name}</Td>
+                    <Td>{product.category.name}</Td>
+                    <Td>{product.description}</Td>
+                    <Td>{product.stock}</Td>
+                    <Td>${product.price}</Td>
+                    <Td><EditProduct product={product} /></Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan="6" textAlign="center" py={5}>
+                    No se encontraron productos
+                  </Td>
+                </Tr>
+              )}
+              
 
-          <Pagination.Items
-            render={(page) => (
-              <IconButton variant={{ base: "ghost", _selected: "outline" }}>
-                {page.value}
-              </IconButton>
-            )}
-          />
-
-          <Pagination.NextTrigger asChild>
-            <IconButton>
-              <LuChevronRight />
-            </IconButton>
-          </Pagination.NextTrigger>
-        </ButtonGroup>
-      </Pagination.Root>
-
-    </Stack>
+          </Tbody>
+        </Table>
+      </Stack>
     </Box>
   )
 }
 
 export default Products;
-
-const items = [
-  { id: 1, name: "Laptop", category: "Electronics", price: 999.99 },
-  { id: 2, name: "Coffee Maker", category: "Home Appliances", price: 49.99 },
-  { id: 3, name: "Desk Chair", category: "Furniture", price: 150.0 },
-  { id: 4, name: "Smartphone", category: "Electronics", price: 799.99 },
-  { id: 5, name: "Headphones", category: "Accessories", price: 199.99 },
-]
